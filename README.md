@@ -41,7 +41,7 @@ if err != nil {
 trampoline[8191]
 func Hook() {
     item := goinlinehook.NewHookItem(Add, MyAdd)
-    ptr := (uintptr)(unsafe.Pointer(&trampoline[8191]))
+    ptr := (uintptr)(unsafe.Pointer(&trampoline[0]))
     item.TrampolineAddr = ptr
     err := item.Hook()
     if err != nil {
