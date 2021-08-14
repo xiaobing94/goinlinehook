@@ -3,8 +3,8 @@ package goinlinehook
 import (
 	"fmt"
 	"reflect"
-	"unsafe"
 	"syscall"
+	"unsafe"
 
 	"golang.org/x/arch/x86/x86asm"
 )
@@ -15,6 +15,7 @@ var (
 	g_all = make(map[uintptr]*HookItem)
 )
 
+// StatusType 状态类型
 type StatusType int32
 
 const (
@@ -29,6 +30,7 @@ func init() {
 	}
 }
 
+// GetArchMode 获取系统位宽
 func GetArchMode() int {
 	return archMode
 }
@@ -42,7 +44,7 @@ func getDataPtrFromValue(v reflect.Value) uintptr {
 	return (uintptr)((*valueStruct)(unsafe.Pointer(&v)).ptr)
 }
 
-
+// HookItem hook项
 type HookItem struct {
 	TargetAddr reflect.Value
 	NewAddr reflect.Value
@@ -51,6 +53,7 @@ type HookItem struct {
 	Status StatusType
 }
 
+// NewHookItem 创建并hook
 func NewHookItem(target, newFunc interface{}) *HookItem{
 	t := reflect.ValueOf(target)
 	n := reflect.ValueOf(newFunc)
@@ -61,6 +64,7 @@ func NewHookItem(target, newFunc interface{}) *HookItem{
 	return item
 }
 
+// UnHook 取消hook
 func (item *HookItem) UnHook() {
 	target := item.TargetAddr.Pointer()
 	CopyInstruction(target, item.OriginalInst)
@@ -68,6 +72,7 @@ func (item *HookItem) UnHook() {
 	return
 }
 
+// GetOldFunc 获取旧函数地址
 func (item *HookItem) GetOldFunc(oldFunc interface{}) error {
 	if item.Status != StatusHooked {
 		return fmt.Errorf("HookItem is not Hooked")
@@ -78,6 +83,7 @@ func (item *HookItem) GetOldFunc(oldFunc interface{}) error {
 	return nil
 }
 
+// Hook hook目标函数
 func (item *HookItem) Hook() error {
 	if item.TargetAddr.Kind() != reflect.Func {
 		return fmt.Errorf("target must be a Func")
@@ -126,6 +132,7 @@ func (item *HookItem) Hook() error {
 	return nil
 }
 
+// NewAndHook 实例化并hook
 func NewAndHook(target, newFunc, oldFunc interface{}) (*HookItem, error){
 	item := NewHookItem(target, newFunc)
 	err := item.Hook()
@@ -136,6 +143,7 @@ func NewAndHook(target, newFunc, oldFunc interface{}) (*HookItem, error){
 	return item, err
 }
 
+// GetOldFunc 获取旧函数指针
 func GetOldFunc(target, oldFunc interface{}) error {
 	t := reflect.ValueOf(target)
 	targetAddr := t.Pointer()

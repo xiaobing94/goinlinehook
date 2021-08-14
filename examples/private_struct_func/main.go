@@ -17,7 +17,6 @@ func MyAdd(ptr uintptr) int {
 	return oldFunc(ptr) + 10
 }
 
-
 func main() {
 	var oldFunc func (ptr uintptr) int
 	as := &private_struct.AddStruct{

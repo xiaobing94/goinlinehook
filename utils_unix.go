@@ -30,6 +30,7 @@ func setPageProtect(addr uintptr, length int, prot int) {
 	}
 }
 
+// CopyInstruction 拷贝指令
 func CopyInstruction(location uintptr, data []byte) {
 	f := makeSliceFromPointer(location, len(data))
 	setPageProtect(location, len(data), syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)

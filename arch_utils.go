@@ -3,6 +3,7 @@ package goinlinehook
 import (
 	"math"
 	"unsafe"
+
 	"golang.org/x/arch/x86/x86asm"
 )
 var (
@@ -19,7 +20,6 @@ const (
 	FT_SKIP     = 7
 	FT_OVERFLOW = 8
 )
-
 
 func SetMinJmpCodeSize(sz int) {
 	minJmpCodeSize = sz
@@ -67,6 +67,7 @@ func calcOffset(insSz int, startAddr, curAddr, to uintptr, to_sz int, offset int
 	return int64(uint64(absAddr) - uint64(newAddr) - uint64(insSz))
 }
 
+// 指令修复
 func FixInstruction(mode int, startAddr, curAddr uintptr, code []byte, to uintptr, to_sz int) (int, int, []byte) {
 	nc := make([]byte, len(code))
 	copy(nc, code)
